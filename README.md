@@ -26,3 +26,20 @@ The example of runing the test phase:
 ```
 python test.py --dataset XM2VTS --p_model photo_G_1_model_epoch_200.pth --s_model sketch_G_2_model_epoch_200.pth --cuda
 ```
+
+# Generated Sketches
+
+The generated sketches are avaliable now at:
+
+Baidu Netdisk
+```
+Link: https://pan.baidu.com/s/1LCSZRKDQskfsycDH3TNopA
+Password: j4wu
+```
+
+or
+
+Google Drive:
+```
+Link: https://drive.google.com/file/d/14468pBbin34TtbvxsFOYYKBkQdoVTm80/view
+```
