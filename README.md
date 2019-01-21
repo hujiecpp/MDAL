@@ -31,15 +31,21 @@ python test.py --dataset XM2VTS --p_model photo_G_1_model_epoch_200.pth --s_mode
 
 The generated sketches are avaliable now at:
 
-Baidu Netdisk
-```
+## Baidu Netdisk
+
 Link: https://pan.baidu.com/s/1LCSZRKDQskfsycDH3TNopA
 Password: j4wu
-```
+
 
 or
 
-Google Drive:
-```
+## Google Drive:
+
 Link: https://drive.google.com/file/d/14468pBbin34TtbvxsFOYYKBkQdoVTm80/view
-```
+
+
+# Demo
+
+The demo of this paper will be avaliable soon at:
+
+Link: http://mac.xmu.edu.cn/demos.html
