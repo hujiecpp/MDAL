@@ -53,13 +53,17 @@ Link: http://mac.xmu.edu.cn/demos.html
 If you want to deploy the server by yourslef, you can checkout demo branch.
 
 ## Prerequisites
-python3
-flask
+* python3
+* flask
 
 ## Run web server
-cd $MDAL_ROOT/flask
-python3 app.py
-URL: http://localhost:5002 
 
-You may need to configure chrome to read camera devices under the HTTP protocol. You can modify params such as $G_USE_CUDA in $MDAL_ROOT/flask/sketch.py, and we recommend using GPU when runnig the server.
+```
+cd $MDAL_ROOT/flask  
+python3 app.py  
+URL: http://localhost:5002  
+```
+
+You may need to configure chrome to read camera devices under the HTTP protocol.  
+You can modify params such as $G_USE_CUDA in $MDAL_ROOT/flask/sketch.py, and we recommend using GPU when runnig the server.  
 
