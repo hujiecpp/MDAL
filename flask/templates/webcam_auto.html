@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<!-- <head>
+    <title>Post an Image test</title>
+    <script src="https://webrtc.github.io/adapter/adapter-latest.js"></script>
+</head>
+<style>
+    /* mirror the image */
+    video, canvas {
+    transform: scale(-1, 1); /*For Firefox (& IE) */
+    -webkit-transform: scale(-1, 1); /*for Chrome & Opera (& Safari) */
+}
+</style> -->
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Sketch Synthesis</title>
+</head>
+<body>
+    <div align="center">
+        <canvas id="canvas" width="640" height="480"></canvas>
+        <img id="resImg" width="640" height="480">
+    </div>
+    <div align="center">
+        <video id="myVideo" width="640" height="480" autoplay></video>
+        <!-- <video id="myVideo" width="640" height="480" controls></video> -->
+    </div>
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script src="{{ url_for('static', filename='js/webcam.js') }}"></script>
+    <script>
+        $("#myVideo").hide(); // hide camera
+        getUserMedia({video : {width: 640, height: 480}}, success, error);
+        let mv = document.getElementById("myVideo");
+        //create a canvas to grab an image for upload
+        let imgCanvas = document.getElementById('canvas');
+        let imgCtx = imgCanvas.getContext("2d");
+        let imgResp = document.getElementById('resImg')
+        // imgCanvas.width = mv.videoWidth;
+        // imgCanvas.height = mv.videoHeight;
+        let imgType = 'image/jpeg' // default image/png
+        
+        // long polling
+        imgCtx.drawImage(mv, 0, 0, mv.videoWidth, mv.videoHeight); 
+        imgStr = imgCanvas.toDataURL(imgType); 
+        $(function () {
+            (function longPolling() {
+                imgCtx.drawImage(mv, 0, 0, mv.videoWidth, mv.videoHeight); 
+                imgStr = imgCanvas.toDataURL(imgType); 
+                let tmStart = (new Date()).getTime(); 
+                $.ajax({
+                    method: 'POST', // default get
+                    url: '/cam_remote', // "{{ url_for('cam_remote') }}"
+                    data: imgStr,
+                    timeout: 5000,
+                    contentType: false,
+                    processData: false,
+                    success: function (data, textStatus) {
+                        imgResp.setAttribute('src',data);
+                        console.log(`recv: ${(new Date()).getTime()-tmStart} ms`)
+                        longPolling();
+                    },
+                    error: function (XMLHttpRequest, textStatus, errorThrown) {
+                        console.error(`${XMLHttpRequest.status},${XMLHttpRequest.readyState},${textStatus}`);
+                        longPolling();
+                    }
+                });
+            })();
+        });
+    </script>
+</body>
+</html>

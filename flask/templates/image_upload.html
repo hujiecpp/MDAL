@@ -1,0 +1,39 @@
+<!DOCTYPE html> 
+<html>
+    <head>
+        <title>Sketch Synthesis</title>
+    </head>
+    <body>
+    <div id="box" align="center">
+        <form id="uploadForm" enctype="multipart/form-data" >
+            <input type="file" name="file">
+            <input type="button" value="上传" id="upFileBtn">
+        </form>
+    </div>
+    <div align="center">
+        <img id="resImg" width="640" height="480">
+    </div>
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js" ></script>
+    <script>
+        let resImg = document.getElementById('resImg');
+        $('#upFileBtn').click(function () {
+            let formFile = new FormData($('#uploadForm')[0])
+            let tmStart = (new Date()).getTime(); 
+		     $.ajax({
+                url: "/img_upload",
+                type: "POST",
+                data: formFile,
+                processData: false,
+                contentType: false,
+                success: function (data) {
+                    console.log(`recv: ${(new Date()).getTime()-tmStart}`);
+                    resImg.setAttribute('src', data);
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    console.error(`${XMLHttpRequest.status},${XMLHttpRequest.readyState},${textStatus}`);
+                }
+             })
+        })
+    </script>
+    </body>
+</html>

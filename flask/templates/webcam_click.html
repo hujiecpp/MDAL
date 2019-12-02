@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<!-- <head>
+    <title>Post an Image test</title>
+    <script src="https://webrtc.github.io/adapter/adapter-latest.js"></script>
+</head>
+<style>
+    /* mirror the image */
+    video, canvas {
+    transform: scale(-1, 1); /*For Firefox (& IE) */
+    -webkit-transform: scale(-1, 1); /*for Chrome & Opera (& Safari) */
+}
+</style> -->
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Sketch Synthesis</title>
+</head>
+<body>
+    <div align="center">
+        <video id="myVideo" width="640" height="480" autoplay></video>
+        <!-- <video id="myVideo" width="640" height="480" controls></video> -->
+        <canvas id="canvas" width="640" height="480"></canvas>
+        <img id="resImg" width="640" height="480">
+    </div>
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script src="{{ url_for('static', filename='js/webcam.js') }}"></script>
+    <script>
+        getUserMedia({video : {width: 640, height: 480}}, success, error);
+        let mv = document.getElementById("myVideo");
+        //create a canvas to grab an image for upload
+        let imgCanvas = document.getElementById('canvas');
+        let imgCtx = imgCanvas.getContext("2d");
+        let imgResp = document.getElementById('resImg')
+        // imgCanvas.width = mv.videoWidth;
+        // imgCanvas.height = mv.videoHeight;
+        let imgType = 'image/jpeg'
+        
+        // v2 send dataUrl
+        mv.addEventListener('click', function () {
+            imgCtx.drawImage(mv, 0, 0, mv.videoWidth, mv.videoHeight); 
+            let imgStr = imgCanvas.toDataURL(imgType);  //.substring(subIdx)
+            let tmStart = (new Date()).getTime();
+            $.ajax({
+                method: 'POST',
+                url: '/cam_remote', // "{{ url_for('cam_remote') }}"
+                data: imgStr,
+                contentType: false,
+                processData: false,
+                success: function(data, textStatus) { 
+                    // alert(textStatus);
+                    console.log(`recv: ${(new Date()).getTime()-tmStart} ms`)
+                    imgResp.setAttribute('src',data);
+                },
+                　error: function (XMLHttpRequest, textStatus, errorThrown) {
+            　　　　  console.error(`${XMLHttpRequest.status},${XMLHttpRequest.readyState},${textStatus}`);
+            　　}
+            });
+        },false)
+    </script>
+</body>
+</html>

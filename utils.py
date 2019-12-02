@@ -1,5 +1,5 @@
 import torch
-import Image
+# import Image
 import numpy as np 
 import torch.utils.data as data
 
@@ -8,6 +8,7 @@ from os.path import join
 from scipy.misc import imread, imresize, imsave
 
 import random
+from time import time
 
 ### image w x h
 image_sz = 256
@@ -83,29 +84,37 @@ def loadImage(file_path, w, h, t, opt):
     return img
 
 ### save image
-def saveImage(img, file_name):
+def saveImage(img, file_name, log=False, size=(250,200,3)):
     img = deProcessImg(img)
     img = img.numpy()
     img *= 255.0
     img = img.clip(0, 255)
     img = np.transpose(img, (1, 2, 0))
-    img = imresize(img, (250, 200, 3))
+    img = imresize(img, size)
     img = img.astype(np.uint8)
     imsave(file_name, img)
-    print "Image saved as {}".format(file_name)
+    if log:
+        print ("Image saved as {}".format(file_name))
 
 ### pre process of image
-def preProcessImg(img):
+def preProcessImg(img, use_cuda=False):
     # [0,255] image to [0,1]
-    min = img.min()
-    max = img.max()
-    img = torch.FloatTensor(img.size()).copy_(img)
+    if use_cuda:
+        img = torch.cuda.FloatTensor(img.size()).copy_(img)
+    else:
+        img = torch.FloatTensor(img.size()).copy_(img)
+    min = 1.0 * img.min()
+    max = 1.0 * img.max()
     img.add_(-min).mul_(1.0 / (max - min))
 
     # RGB to BGR
-    idx = torch.LongTensor([2, 1, 0])
+    # print('pre',type(img),img.shape)
+    if use_cuda:
+        idx = torch.cuda.LongTensor([2, 1, 0])
+    else:
+        idx = torch.LongTensor([2, 1, 0])
     img = torch.index_select(img, 0, idx)
-
+    # print('pre',type(img),img.shape)
     # [0,1] to [-1,1]
     img = img.mul_(2).add_(-1)
 
@@ -115,11 +124,15 @@ def preProcessImg(img):
     return img
 
 ### de process of img
-def deProcessImg(img):
+def deProcessImg(img, use_cuda=False):
     # BGR to RGB
-    idx = torch.LongTensor([2, 1, 0])
+    # print('post',type(img),img.shape)
+    if use_cuda:
+        idx = torch.cuda.LongTensor([2, 1, 0])
+    else:
+        idx = torch.LongTensor([2, 1, 0])
     img = torch.index_select(img, 0, idx)
-
+    # print('post',type(img),img.shape)
     # [-1,1] to [0,1]
     img = img.add_(1).div_(2)
     return img
